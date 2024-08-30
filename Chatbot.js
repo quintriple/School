@@ -1,4 +1,3 @@
-// JavaScript example for integrating with a server-side proxy (client-side)
 const chatBox = document.getElementById('chat-box');
 const inputField = document.getElementById('input-field');
 const sendButton = document.getElementById('send-button');
@@ -12,15 +11,21 @@ function addMessage(content, sender) {
 }
 
 async function getBotResponse(userInput) {
-    const response = await fetch('https://your-server-url.com/api/get-response', { // URL of your server-side proxy
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ userInput })
-    });
-    const data = await response.json();
-    return data;
+    try {
+        const response = await fetch('https://your-server-url.com/api/get-response', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userInput })
+        });
+        if (!response.ok) throw new Error('Network response was not ok');
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error:', error);
+        return 'Sorry, I am unable to process your request.';
+    }
 }
 
 sendButton.addEventListener('click', async () => {
