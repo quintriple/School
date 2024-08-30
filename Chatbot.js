@@ -1,3 +1,4 @@
+// JavaScript example for integrating with a server-side proxy (client-side)
 const chatBox = document.getElementById('chat-box');
 const inputField = document.getElementById('input-field');
 const sendButton = document.getElementById('send-button');
@@ -10,27 +11,23 @@ function addMessage(content, sender) {
     chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom of the chat
 }
 
-function getBotResponse(userInput) {
-    // Define responses for various questions
-    const responses = {
-        "hello": "Hi there! How can I assist you with your homework?",
-        "what is the capital of france": "The capital of France is Paris.",
-        "who is the president of the usa": "As of 2024, the President of the USA is Joe Biden.",
-        "what is the square root of 16": "The square root of 16 is 4.",
-        "help": "Sure, what do you need help with?",
-        // Add more predefined responses here
-    };
-    
-    // Convert user input to lowercase and get response
-    userInput = userInput.toLowerCase();
-    return responses[userInput] || "Sorry, I don't understand that question.";
+async function getBotResponse(userInput) {
+    const response = await fetch('https://your-server-url.com/api/get-response', { // URL of your server-side proxy
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ userInput })
+    });
+    const data = await response.json();
+    return data;
 }
 
-sendButton.addEventListener('click', () => {
+sendButton.addEventListener('click', async () => {
     const userInput = inputField.value.trim();
     if (userInput) {
         addMessage(userInput, 'user');
-        const botResponse = getBotResponse(userInput);
+        const botResponse = await getBotResponse(userInput);
         addMessage(botResponse, 'bot');
         inputField.value = ''; // Clear the input field
     }
